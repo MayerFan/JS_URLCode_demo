@@ -1,0 +1,197 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>跨域资源共享</title>
+
+        <style>
+            input.url {
+                display: inline-block;
+                width: 100%;
+                padding: 10px;
+            }
+            .btn {
+                background-color: sandybrown;
+                padding: 5px;
+                margin-top: 10px;
+            }
+            form {
+                background-color: rgb(209, 202, 202);
+                margin-top: 5px;
+                padding: 5px;
+            }
+            .explain {
+                background-color: sandybrown;
+            }
+        </style>
+    </head>
+    <body>
+        <button onclick="requestResourse()">点击请求资源</button>
+        <h5>请求结果为：</h5>
+        <p></p>
+
+        <div>
+            <input class="url" type="text" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)" value="http://172.0.2.218:3000//html/agree.html?name=振华重工">
+        </div>
+        <div class="btn">
+            <button onclick="jsEscape()">escape编码</button>
+            <button onclick="jsDeEscape()">escape解码</button>
+            <button onclick="jsEncode()">encode编码</button>
+            <button onclick="jsDeEncode()">encode解码</button>
+            <button onclick="jsEncodeComponent()">EncodeComponent编码</button>
+            <button onclick="jsDeEncodeComponent()">EncodeComponent解码</button>
+        </div>
+        <form action="">
+            <input class="one" type="radio" name="code" value="1" checked>对输入框内容进行编码和解码
+            <br />
+            <input class="two" type="radio" name="code" value="2">对结果进行继续编码和解码
+        </form>
+        <p>编码结果：
+            <span class="encodeFlag"></span>
+            <br />
+            <span class="encode"></span>
+        </p>
+        <p>解码结果：
+            <span class="decodeFlag"></span>
+            <br />
+            <span class="decode"></span>
+        </p>
+        <div class="explain">
+            <h2>总结</h2>
+            <h3>escape:</h3>
+            <p>
+                对除ASCII字母、数字、标点符号 @  *  _  +  -  .  / 以外的其他字符进行编码。
+            </p>
+            <h3>codeURI:</h3>
+            <p>
+                对除ASCII字母、数字、标点符号 ! @ # $ & * ( ) = : / ; ? + ' 以外的其他字符进行编码。
+            </p>
+            <h3>codeComponent:</h3>
+            <p>
+                对除ASCII字母、数字 - _ . ! ~ * ' ( ) 以外的其他字符进行编码。
+            </p>
+        </div>
+
+        <script>
+            function requestResourse() {
+                var pDoc = document.getElementsByTagName("p")[0]
+                var xmlHttp; 
+                if(window.XMLHttpRequest) {
+                    xmlHttp = new XMLHttpRequest()
+                }else {
+                    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP")
+                }
+                xmlHttp.onreadystatechange = function() {
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                        pDoc.innerHTML = xmlHttp.responseText;
+                    }
+                }
+                xmlHttp.open("POST", "http://172.0.2.218:3000/client/api/000003", true);
+                xmlHttp.send();
+            }
+
+            // 测试JS的url编码解码
+            var encodeEle
+            var decodeEle
+            var encodeResult 
+            var decodeResult
+            var codeType
+            var url 
+            var encodeFlag
+            var decodeFlag
+            window.onload = function () {
+                var urlInput = document.getElementsByTagName("input")[0]
+                encodeEle = document.getElementsByClassName("encode")[0]
+                decodeEle = document.getElementsByClassName("decode")[0]
+                var one = document.getElementsByClassName("one")[0]
+                var two = document.getElementsByClassName("two")[0]
+                encodeFlag = document.getElementsByClassName("encodeFlag")[0]
+                decodeFlag = document.getElementsByClassName("decodeFlag")[0]
+
+                codeType = 0;
+                url = urlInput.value
+                encodeResult = url
+                decodeResult = url
+
+                one.onclick = function() {
+                    checkRadioType()
+                }
+                two.onclick = function() {
+                    checkRadioType()
+                }
+                //判断单选框
+                function checkRadioType() {
+                    if (one.checked == true) {
+                        codeType = 0;
+                    }else {
+                        codeType = 1;
+                    }
+                }
+            }
+
+            function jsEscape() {
+                    if (codeType == 0) {
+                        encodeResult = escape(url)
+                    }else {
+                        encodeResult = escape(encodeResult)
+                    }
+                    decodeResult = encodeResult
+                    encodeEle.innerHTML = encodeResult
+                    encodeFlag.innerHTML = "(escape)"
+                }
+                function jsDeEscape() {
+                    decodeResult = unescape(decodeResult)
+                    decodeEle.innerHTML = decodeResult
+                    decodeFlag.innerHTML = "(deEscape)"
+                }
+                function jsEncode() {
+                    if (codeType == 0) {
+                        encodeResult = encodeURI(url)
+                    }else {
+                        encodeResult = encodeURI(encodeResult)
+                    }
+                    decodeResult = encodeResult
+                    encodeEle.innerHTML = encodeResult
+                    encodeFlag.innerHTML = "(encode)"
+                }
+                function jsDeEncode() {
+                    decodeResult = decodeURI(decodeResult)
+                    decodeEle.innerHTML = decodeResult
+                    decodeFlag.innerHTML = "(decode)"
+                }
+                function jsEncodeComponent() {
+                    if (codeType == 0) {
+                        encodeResult = encodeURIComponent(url)
+                    }else {
+                        encodeResult = encodeURIComponent(encodeResult)
+                    }
+                    decodeResult = encodeResult
+                    encodeEle.innerHTML = encodeResult
+                    encodeFlag.innerHTML = "(encodeURIComponent)"
+                }
+                function jsDeEncodeComponent() {
+                    decodeResult = decodeURIComponent(decodeResult)
+                    decodeEle.innerHTML = decodeResult
+                    decodeFlag.innerHTML = "(decodeURIComponent)"
+                }
+
+            // Firefox, Google Chrome, Opera, Safari, Internet Explorer from version 9
+            function OnInput (event) {
+                // alert ("The new content: " + event.target.value);
+                url = event.target.value
+                encodeResult = url
+                decodeResult = url
+            }
+            // Internet Explorer
+            function OnPropChanged (event) {
+                if (event.propertyName.toLowerCase () == "value") {
+                    // alert ("The new content: " + event.srcElement.value);
+                    url = event.srcElement.value
+                    encodeResult = url
+                    decodeResult = url
+                }
+            }
+
+        </script>
+    </body>
+</html>
