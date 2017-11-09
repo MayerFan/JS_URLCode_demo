@@ -5,4 +5,4 @@
 ## 二、稍微麻烦点的方法：node启动start.js文件，访问本地端口4000即可
 
 ### 图示如下：
-[gif图示](https://github.com/MayerFan/JS_URLCode_demo/blob/master/urlcode.gif)
+![gif图示](https://github.com/MayerFan/JS_URLCode_demo/blob/master/urlcode.gif)
